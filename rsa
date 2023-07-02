@@ -1,0 +1,53 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+
+def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(math.sqrt(num)) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+
+def factorize_rsa(num):
+    factors = []
+    # Check for divisibility by 2
+    while num % 2 == 0:
+        factors.append(2)
+        num //= 2
+
+    # Check for divisibility by odd primes
+    for i in range(3, int(math.sqrt(num)) + 1, 2):
+        if is_prime(i):
+            while num % i == 0:
+                factors.append(i)
+                num //= i
+
+    # If num is still greater than 2, it must be the second prime factor
+    if num > 2:
+        factors.append(num)
+
+    return factors
+
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: factors <file>")
+        print("where <file> is a file containing an RSA number to factor.")
+        sys.exit(1)
+
+    filename = sys.argv[1]
+
+    with open(filename, 'r') as file:
+        num = int(file.readline())
+
+    factors = factorize_rsa(num)
+    print("{}={}".format(num, '*'.join(map(str, factors))))
+
+
+if __name__ == '__main__':
+    main()
